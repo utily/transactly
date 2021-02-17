@@ -12,21 +12,33 @@ export class Backend<T> {
 			})
 		)
 	}
-	async create(document: { key: cryptly.Identifier; shard: string; value: T }) {
-		const parameters = {
+	async create(document: { key: cryptly.Identifier; shard: string; value: T; lock?: string }) {
+		const response = await this.client.createDocument<Document<T> & cosmos.Document>({
 			partitionKey: document.shard,
-			document: JSON.stringify(document),
-		}
-		console.log("request", parameters)
-		const response = await this.client.createDocument<Document<T> & cosmos.Document>(parameters)
-		console.log("response", response)
+			document: {
+				id: document.key,
+				shard: document.shard,
+				value: document.value,
+				lock: document.lock,
+			} as cosmos.Resource,
+		})
 		return this.fromResponse(response)
 	}
-	async set(document: { key: cryptly.Identifier; shard: string; value: T }): Promise<Document<T> | undefined> {
+	async set(document: {
+		key: cryptly.Identifier
+		shard: string
+		value: T
+		lock?: string
+	}): Promise<Document<T> | undefined> {
 		return this.fromResponse(
 			await this.client.createDocument<Document<T> & cosmos.Document>({
 				partitionKey: document.shard,
-				document: JSON.stringify(document),
+				document: {
+					id: document.key,
+					shard: document.shard,
+					value: document.value,
+					lock: document.lock,
+				} as cosmos.Resource,
 				isUpsert: true,
 			})
 		)
@@ -36,20 +48,39 @@ export class Backend<T> {
 			await this.client.replaceDocument<Document<T> & cosmos.Document>({
 				docId: document.key,
 				partitionKey: document.shard,
-				document: JSON.stringify(document),
+				document: {
+					id: document.key,
+					shard: document.shard,
+					value: document.value,
+					lock: document.lock,
+				} as cosmos.Resource,
 				ifMatch: document.eTag,
 			})
 		)
 	}
-	async delete(document: { key: cryptly.Identifier; shard: string }): Promise<Document<T> | false> {
-		const response = await this.client.deleteDocument({ docId: document.key, partitionKey: document.shard })
-		return response.status == 200 ? await response.json() : false
+	async delete(document: { key: cryptly.Identifier; shard: string; eTag?: string }): Promise<boolean> {
+		const response = await this.client.deleteDocument({
+			docId: document.key,
+			partitionKey: document.shard,
+			ifMatch: document.eTag,
+		})
+		return response.ok
 	}
 	private async fromResponse(
 		response: cosmos.ItemResponse<Document<T> & cosmos.Document>
 	): Promise<Document<T> | undefined> {
-		const result = response.status == 200 ? await response.json() : undefined
-		return result && { key: result.key, shard: result.shard, value: result.value, eTag: result?._etag }
+		if (response.status >= 400)
+			console.log("Transactly Error", response, await response.json())
+		const result = response.status < 400 ? await response.json() : undefined
+		return (
+			result && {
+				key: result.id,
+				shard: result.shard,
+				value: result.value,
+				lock: result.lock,
+				eTag: JSON.parse(result?._etag),
+			}
+		)
 	}
 	static async connect<T>(url: string, secret: string, database: string, collection: string): Promise<Backend<T>> {
 		const client = new cosmos.CosmosClient({

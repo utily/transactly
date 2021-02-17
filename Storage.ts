@@ -1,5 +1,6 @@
 import * as cryptly from "cryptly"
 import { Backend } from "./Backend"
+import { Document } from "./Document"
 
 export class Storage<T> {
 	constructor(private backend: Backend<T>) {}
@@ -7,29 +8,27 @@ export class Storage<T> {
 		const result = await this.backend.get({ key, shard })
 		return result?.value
 	}
-	async put(key: string, shard: string, value: T, eTag?: string): Promise<void> {
-		key = cryptly.Identifier.toHexadecimal(key, 12).padStart(24, "0").slice(0, 24)
+	async put(key: string, shard: string, value: T, eTag?: string): Promise<T | undefined> {
 		const result = await (eTag
 			? this.backend.replace({ key, shard, value, eTag })
-			: this.backend.create({ key, shard, value }))
-		console.log("put result", key, result)
+			: this.backend.set({ key, shard, value }))
+		return result?.value
 	}
-	async delete(key: string, shard: string): Promise<boolean> {
-		const result = await this.backend.delete({ key, shard })
-		return result ? true : false
+	async delete(key: string, shard: string, eTag?: string): Promise<boolean> {
+		return await this.backend.delete({ key, shard, eTag })
 	}
-	async modify(key: string, shard: string, modify: (value: T) => Promise<T>): Promise<boolean> {
+	async modify(key: string, shard: string, modify: (value: T) => Promise<T>): Promise<T | undefined> {
 		const initial = await this.backend.get({ key, shard })
-		let result = false
+		let result: Document<T> | undefined
 		if (initial && !initial.lock) {
 			const lock = cryptly.Identifier.generate(8)
 			const locked = await this.backend.replace({ ...initial, lock })
 			if (locked) {
 				const modified = await modify(locked.value)
-				result = (await this.backend.replace({ ...initial, value: modified, lock: undefined })) ? true : false
+				result = await this.backend.replace({ ...locked, value: modified, lock: undefined })
 			}
 		}
-		return result
+		return result?.value
 	}
 	static async connect<T>(url: string, secret: string, database: string, collection: string): Promise<Storage<T>> {
 		const backend = await Backend.connect<T>(url, secret, database, collection)
