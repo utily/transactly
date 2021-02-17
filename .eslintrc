@@ -55,17 +55,11 @@
 						"servly",
 						"servly-azure",
 						"smoothly",
-						"@payfunc/model-card",
-						"@payfunc/model",
-						"@payfunc/common-worker",
-						"@payfunc/cli-card",
-						"@payfunc/component",
-						"@payfunc/service",
-						"^\\u0000",
 						"^@?\\w",
 						"^",
 						"^\\."
-					]
+					],
+					["^\\u0000"]
 				]
 			}
 		]

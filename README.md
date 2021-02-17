@@ -1,2 +1,2 @@
-# template-library
-Template for NPM library.
+# Transactly
+Transactional Key Value Store based on CosmosDB. 

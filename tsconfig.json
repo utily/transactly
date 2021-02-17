@@ -1,15 +1,21 @@
 {
-	"extends": "./tsconfig.test.json",
-	"compilerOptions": {
-		"declaration": true,
-		"sourceMap": true,
-		"sourceRoot": "../",
-		"outDir": "dist",
-		"baseUrl": ".",
-		"paths": { "*": ["types/*"] },
-		"allowSyntheticDefaultImports":true
-	},
-	"files": [
-		"index.ts",
-	]
+  "compilerOptions": {
+    "outDir": "./dist",
+    "module": "es2015",
+    "target": "es2019",
+    "lib": ["es2019", "webworker"],
+    "alwaysStrict": true,
+    "strict": true,
+    "preserveConstEnums": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "types": ["@cloudflare/workers-types","node"]
+  },
+  "include": [
+    "*.ts",
+    "**/*.ts",
+    "./node_modules/@cloudflare/workers-types/index.d.ts"
+  ],
+  "exclude": ["*.spec.ts", "**/*.spec.ts", "node_modules/", "dist/"]
 }
