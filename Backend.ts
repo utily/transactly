@@ -43,6 +43,19 @@ export class Backend<T> {
 			})
 		)
 	}
+	async list(document: { shard: string }): Promise<Document<T>[] | undefined> {
+		const response = await this.client.getDocuments<Document<T> & cosmos.Document>({ partitionKey: document.shard })
+		const result = response.status < 400 ? await response.json() : undefined
+		return result?.map(r => {
+			return {
+				key: r.id,
+				shard: r.shard,
+				value: r.value,
+				lock: r.lock,
+				eTag: JSON.parse(r?._etag),
+			}
+		})
+	}
 	async replace(document: Document<T>): Promise<Document<T> | undefined> {
 		return this.fromResponse(
 			await this.client.replaceDocument<Document<T> & cosmos.Document>({
