@@ -51,7 +51,7 @@
     "lint": "eslint '**/*.{ts,tsx}'",
     "fix": "eslint '**/*.{ts,tsx}' --fix",
     "clean": "rimraf dist node_modules coverage",
-    "test": "jest --maxWorkers=2",
+    "test": "echo 'No tests set up.'",
     "test:watch": "watch jest",
     "transpile": "tsc --project tsconfig.test.json",
     "deploy": "wrangler publish",
