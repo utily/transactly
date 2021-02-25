@@ -17,6 +17,11 @@ async function create(request: http.Request): Promise<http.Response.Like | any> 
 }
 router.add("POST", "/:shard", create)
 
+async function list(request: http.Request): Promise<http.Response.Like | any> {
+	return await (await storage).list(request.parameter.shard)
+}
+router.add("GET", "/:shard", list)
+
 async function fetch(request: http.Request): Promise<http.Response.Like | any> {
 	const result = await (await storage).get(request.parameter.key, request.parameter.shard)
 	return result ?? { status: 400 }
