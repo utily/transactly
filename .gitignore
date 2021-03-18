@@ -4,3 +4,4 @@ dist
 .npmrc
 worker
 variables.toml
+wrangler.toml
