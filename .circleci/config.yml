@@ -42,7 +42,7 @@ jobs:
             git config user.email circleci@circleci
             git config user.name CircleCI
             git checkout -- package-lock.json
-            npm version patch -m "patch version bump [ci skip]"
+            npm version patch -m "patch version bump %s [ci skip]"
             git push
             git push --tags
       - run:
