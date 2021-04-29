@@ -1,7 +1,8 @@
 import * as cryptly from "cryptly"
+import * as isoly from "isoly"
 import { Backend } from "./Backend"
+import { checkLock } from "./checkLock"
 import { Document } from "./Document"
-
 export class Storage<T> {
 	constructor(private backend: Backend<T>) {}
 	async get(key: string, shard: string): Promise<T | undefined> {
@@ -24,8 +25,9 @@ export class Storage<T> {
 	async modify(key: string, shard: string, modify: (value: T) => Promise<T>): Promise<T | undefined> {
 		const initial = await this.backend.get({ key, shard })
 		let result: Document<T> | undefined
-		if (initial && !initial.lock) {
-			const lock = cryptly.Identifier.generate(8)
+		let lock: isoly.DateTime | undefined = checkLock<T>(initial)
+		if (initial && !lock) {
+			lock = isoly.DateTime.now() + cryptly.Identifier.generate(8)
 			const locked = await this.backend.replace({ ...initial, lock })
 			if (locked) {
 				const modified = await modify(locked.value)
