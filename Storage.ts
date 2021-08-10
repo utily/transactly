@@ -15,9 +15,14 @@ export class Storage<T> {
 			: this.backend.set({ key, shard, value }))
 		return result?.value
 	}
-	async list(shard: string): Promise<T[] | undefined> {
-		const result = await this.backend.list({ shard })
-		return result?.map(r => r.value)
+	async list(
+		shard: string,
+		limit?: number,
+		continuationToken?: string,
+		path?: string
+	): Promise<{ data: T[] | undefined; continuation: string | undefined }> {
+		const { data, continuation } = await this.backend.list({ shard }, limit, continuationToken, path)
+		return { data: data?.map(r => r.value), continuation }
 	}
 	async delete(key: string, shard: string, eTag?: string): Promise<boolean> {
 		return await this.backend.delete({ key, shard, eTag })

@@ -43,11 +43,24 @@ export class Backend<T> {
 			})
 		)
 	}
-	async list(document: { shard: string }): Promise<Document<T>[] | undefined> {
+	async list(
+		document: { shard: string },
+		limit?: number,
+		continuation?: string,
+		path?: string
+	): Promise<{ data: Document<T>[]; continuation: string | undefined }> {
+		path = path && path.match(/[^a-zA-Z0-9.]/g) ? '["' + path.replace(/\./g, '"]["') + '"]' : '["value"]["created"]'
 		const result: Document<T>[] = []
 		let response: cosmos.FeedResponse<Document<T> & cosmos.Document> | undefined
 		do {
-			response = response?.hasNext
+			response = limit
+				? await this.client.queryDocuments<Document<T> & cosmos.Document>({
+						maxItems: limit,
+						partitionKey: document.shard,
+						continuation,
+						query: `SELECT * FROM ROOT r ORDER BY r${path} DESC`,
+				  })
+				: response?.hasNext
 				? await response?.next()
 				: await this.client.getDocuments<Document<T> & cosmos.Document>({ partitionKey: document.shard })
 			result.push(
@@ -61,8 +74,9 @@ export class Backend<T> {
 					}
 				})
 			)
-		} while (response.hasNext)
-		return result
+		} while (response.hasNext && !limit)
+		continuation = response.headers.get("x-ms-continuation") || undefined
+		return { data: result, continuation }
 	}
 	async replace(document: Document<T>): Promise<Document<T> | undefined> {
 		return this.fromResponse(

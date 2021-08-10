@@ -18,7 +18,17 @@ async function create(request: http.Request): Promise<http.Response.Like | any> 
 router.add("POST", "/:shard", create)
 
 async function list(request: http.Request): Promise<http.Response.Like | any> {
-	return await (await storage).list(request.parameter.shard)
+	const limit: string | undefined = request.url.searchParams.get("limit") || undefined
+	const path: string | undefined = request.url.searchParams.get("path") || undefined
+	const continuationToken: string | undefined = request.url.searchParams.get("continuation") || undefined
+	const { data, continuation } = await (await storage).list(
+		request.parameter.shard,
+		limit ? +limit : undefined,
+		continuationToken,
+		path
+	)
+	const response: http.Response.Like = { body: data, header: { xMsContinuation: continuation } }
+	return response
 }
 router.add("GET", "/:shard", list)
 
