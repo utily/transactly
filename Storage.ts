@@ -15,8 +15,12 @@ export class Storage<T> {
 			: this.backend.set({ key, shard, value }))
 		return result?.value
 	}
-	async list(shard: string): Promise<T[] | undefined> {
-		const result = await this.backend.list({ shard })
+	async list(
+		shard: string,
+		start?: isoly.Date | isoly.DateTime,
+		end?: isoly.Date | isoly.DateTime
+	): Promise<T[] | undefined> {
+		const result = await this.backend.list({ shard }, start, end)
 		return result?.map(r => r.value)
 	}
 	async delete(key: string, shard: string, eTag?: string): Promise<boolean> {
