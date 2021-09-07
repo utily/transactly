@@ -1,7 +1,0 @@
-type = "webpack"
-zone_id = "a61f10e41657460fd353779737ef176e"
-account_id = "46ab19cd500a15d82064f994954a1b6e"
-name = "transactly-test"
-route = "https://transactly-test.cogneco.com/*"
-workers_dev = true
-webpack_config = "webpack.config.js"
