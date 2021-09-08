@@ -1,5 +1,7 @@
 import * as cryptly from "cryptly"
+import * as isoly from "isoly"
 import * as cosmos from "@cfworker/cosmos"
+import { check } from "./checkDate"
 import { Document } from "./Document"
 
 export class Backend<T> {
@@ -43,13 +45,31 @@ export class Backend<T> {
 			})
 		)
 	}
-	async list(document: { shard: string }): Promise<Document<T>[] | undefined> {
+	async list(
+		document: { shard: string },
+		start?: isoly.Date | isoly.DateTime,
+		end?: isoly.Date | isoly.DateTime
+	): Promise<Document<T>[] | undefined> {
+		;({ start, end } = check(start, end))
 		const result: Document<T>[] = []
 		let response: cosmos.FeedResponse<Document<T> & cosmos.Document> | undefined
+		const parameters = [
+			...(start ? [{ name: "@start", value: start, operator: ">=" }] : []),
+			...(end ? [{ name: "@end", value: end, operator: "<=" }] : []),
+		]
+		const query = `SELECT * FROM ROOT a ${
+			parameters.length
+				? `WHERE ${parameters.map(c => `a["value"]["created"] ${c.operator} ${c.name}`).join(" AND ")} `
+				: ""
+		}ORDER BY a["value"]["created"] DESC`
 		do {
 			response = response?.hasNext
 				? await response?.next()
-				: await this.client.getDocuments<Document<T> & cosmos.Document>({ partitionKey: document.shard })
+				: await this.client.queryDocuments<Document<T> & cosmos.Document>({
+						partitionKey: document.shard,
+						query,
+						parameters,
+				  })
 			result.push(
 				...(await response.json()).map(r => {
 					return {
