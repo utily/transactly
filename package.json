@@ -91,6 +91,6 @@
 	"dependencies": {
 		"@cfworker/cosmos": "^1.6.6",
 		"cryptly": "^0.1.5",
-		"isoly": "0.1.9"
+		"isoly": "0.1.14"
 	}
 }
