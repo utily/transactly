@@ -38,7 +38,9 @@ async function modify(request: http.Request): Promise<http.Response.Like | any> 
 	const body = await request.body
 	const increment = Number.parseInt(body)
 	return (
-		(await (await storage).modify(request.parameter.key, request.parameter.shard, async value => ({
+		(await (
+			await storage
+		).modify(request.parameter.key, request.parameter.shard, async value => ({
 			value: value.value + increment,
 		}))) ?? { status: 400 }
 	)
