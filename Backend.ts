@@ -48,8 +48,10 @@ export class Backend<T> {
 	async list(
 		document: { shard: string },
 		start?: isoly.Date | isoly.DateTime,
-		end?: isoly.Date | isoly.DateTime
-	): Promise<Document<T>[] | undefined> {
+		end?: isoly.Date | isoly.DateTime,
+		limit?: number,
+		continuation?: string
+	): Promise<{ data: Document<T>[]; continuation?: string } | undefined> {
 		;({ start, end } = check(start, end))
 		const result: Document<T>[] = []
 		let response: cosmos.FeedResponse<Document<T> & cosmos.Document> | undefined
@@ -63,26 +65,33 @@ export class Backend<T> {
 				: ""
 		}ORDER BY a["value"]["created"] DESC`
 		do {
-			response = response?.hasNext
-				? await response?.next()
-				: await this.client.queryDocuments<Document<T> & cosmos.Document>({
+			response = limit
+				? await this.client.queryDocuments<Document<T> & cosmos.Document>({
+						maxItems: limit ?? -1,
 						partitionKey: document.shard,
+						continuation,
 						query,
 						parameters,
 				  })
-			result.push(
-				...(await response.json()).map(r => {
-					return {
-						key: r.id,
-						shard: r.shard,
-						value: r.value,
-						lock: r.lock,
-						eTag: JSON.parse(r?._etag),
-					}
-				})
-			)
-		} while (response.hasNext)
-		return result
+				: response?.hasNext
+				? await response?.next()
+				: await this.client.getDocuments<Document<T> & cosmos.Document>({ partitionKey: document.shard })
+			const body = await response.json()
+			body &&
+				result.push(
+					...body?.map(r => {
+						return {
+							key: r.id,
+							shard: r.shard,
+							value: r.value,
+							lock: r.lock,
+							eTag: JSON.parse(r?._etag),
+						}
+					})
+				)
+		} while (response.hasNext && !limit && !continuation)
+		const continuationToken = response.headers.get("x-ms-continuation") || undefined
+		return result.length == 0 && continuation ? undefined : { data: result, continuation: continuationToken }
 	}
 	async replace(document: Document<T>): Promise<Document<T> | undefined> {
 		return this.fromResponse(

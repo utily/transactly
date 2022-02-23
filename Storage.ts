@@ -19,9 +19,27 @@ export class Storage<T> {
 		shard: string,
 		start?: isoly.Date | isoly.DateTime,
 		end?: isoly.Date | isoly.DateTime
-	): Promise<T[] | undefined> {
-		const result = await this.backend.list({ shard }, start, end)
-		return result?.map(r => r.value)
+	): Promise<T[] | undefined>
+	async list(
+		shard: string,
+		start?: isoly.Date | isoly.DateTime,
+		end?: isoly.Date | isoly.DateTime,
+		limit?: number,
+		continuationToken?: string
+	): Promise<{ data: T[]; continuation?: string } | undefined>
+	async list(
+		shard: string,
+		start?: isoly.Date | isoly.DateTime,
+		end?: isoly.Date | isoly.DateTime,
+		limit?: number,
+		continuationToken?: string
+	): Promise<T[] | { data: T[]; continuation?: string } | undefined> {
+		const listed = await this.backend.list({ shard }, start, end, limit, continuationToken)
+		return !listed
+			? listed
+			: limit || continuationToken
+			? { data: listed.data.map(r => r.value), continuation: listed?.continuation }
+			: listed.data.map(r => r.value)
 	}
 	async delete(key: string, shard: string, eTag?: string): Promise<boolean> {
 		return await this.backend.delete({ key, shard, eTag })
