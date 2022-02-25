@@ -26,7 +26,7 @@ export class Storage<T> {
 		end?: isoly.Date | isoly.DateTime,
 		limit?: number,
 		continuationToken?: string
-	): Promise<{ data: T[]; continuation?: string } | undefined>
+	): Promise<{ data: T[]; continuation?: string } | T[] | undefined>
 	async list(
 		shard: string,
 		start?: isoly.Date | isoly.DateTime,
