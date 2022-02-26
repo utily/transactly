@@ -65,30 +65,26 @@ export class Backend<T> {
 				: ""
 		}ORDER BY a["value"]["created"] DESC`
 		do {
-			response = limit
-				? await this.client.queryDocuments<Document<T> & cosmos.Document>({
-						maxItems: limit ?? -1,
+			response = response?.hasNext
+				? await response?.next()
+				: await this.client.queryDocuments<Document<T> & cosmos.Document>({
 						partitionKey: document.shard,
+						maxItems: limit ?? -1,
 						continuation,
 						query,
 						parameters,
 				  })
-				: response?.hasNext
-				? await response?.next()
-				: await this.client.getDocuments<Document<T> & cosmos.Document>({ partitionKey: document.shard })
-			const body = await response.json()
-			body &&
-				result.push(
-					...body?.map(r => {
-						return {
-							key: r.id,
-							shard: r.shard,
-							value: r.value,
-							lock: r.lock,
-							eTag: JSON.parse(r?._etag),
-						}
-					})
-				)
+			result.push(
+				...(await response.json())?.map(r => {
+					return {
+						key: r.id,
+						shard: r.shard,
+						value: r.value,
+						lock: r.lock,
+						eTag: JSON.parse(r?._etag),
+					}
+				})
+			)
 		} while (response.hasNext && !limit && !continuation)
 		const continuationToken = response.headers.get("x-ms-continuation") || undefined
 		return result.length == 0 && continuation ? undefined : { data: result, continuation: continuationToken }
