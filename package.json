@@ -1,6 +1,6 @@
 {
   "name": "transactly",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Transactional Key Value Store based on CosmosDB.",
   "author": "PayFunc",
   "license": "MIT",
