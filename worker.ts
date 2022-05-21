@@ -51,6 +51,6 @@ async function remove(request: http.Request): Promise<http.Response.Like | any> 
 }
 router.add("DELETE", "/:shard/:key", remove)
 
-addEventListener("fetch", event => {
+addEventListener("fetch", (event) => {
 	event.respondWith(router.handle(http.Request.from(event.request)).then(http.Response.to))
 })

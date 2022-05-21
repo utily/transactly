@@ -2,7 +2,7 @@ version: 2.1
 default: &default
   working_directory: ~/repo
   docker:
-    - image: circleci/node:12
+    - image: circleci/node:16
 commands:
   prepare:
     description: "Prepare working directory"
@@ -10,14 +10,14 @@ commands:
       - checkout
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
+          - v2-dependencies-{{ checksum "package.json" }}
           # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+          - v2-dependencies-
       - run: npm install
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+          key: v2-dependencies-{{ checksum "package.json" }}
 jobs:
   build:
     <<: *default

@@ -3,7 +3,7 @@
     "outDir": "./dist",
     "module": "es2015",
     "target": "es2019",
-    "lib": ["es2019", "webworker"],
+    "lib": ["es2019"],
     "alwaysStrict": true,
     "strict": true,
     "preserveConstEnums": true,
