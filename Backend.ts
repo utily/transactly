@@ -75,7 +75,7 @@ export class Backend<T> {
 						parameters,
 				  })
 			result.push(
-				...(await response.json())?.map(r => {
+				...((await response.json()) ?? []).map(r => {
 					return {
 						key: r.id,
 						shard: r.shard,
