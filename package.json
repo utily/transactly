@@ -1,99 +1,99 @@
 {
-  "name": "transactly",
-  "version": "2.0.0",
-  "description": "Transactional Key Value Store based on CosmosDB.",
-  "author": "PayFunc",
-  "license": "MIT",
-  "repository": "https://github.com/payfunc/transactly",
-  "bugs": {
-    "url": "https://github.com/payfunc/transactly/issues"
-  },
-  "homepage": "https://payfunc.com/open-source/transactly",
-  "private": false,
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
-  "git": {
-    "tagName": "v${version}"
-  },
-  "github": {
-    "release": true
-  },
-  "jest": {
-    "transform": {
-      "^.+\\.(j|t)sx?$": "ts-jest"
-    },
-    "transformIgnorePatterns": [
-      "node_modules/(?!(cryptly|authly|gracely|isoly|servly|cloud-router|cloud-http)/.*)"
-    ],
-    "globals": {
-      "ts-jest": {
-        "tsconfig": "tsconfig.test.json",
-        "setTimeout": 2000
-      }
-    },
-    "testEnvironment": "node",
-    "testRegex": "((\\.|/)(test|spec))(\\.|\\/.+)(jsx?|tsx?)$",
-    "testPathIgnorePatterns": [
-      "node_modules/",
-      "dist/"
-    ],
-    "collectCoverageFrom": [
-      "**/*.{ts,tsx,js,jsx}",
-      "!**/node_modules/**",
-      "!**/dist/**"
-    ],
-    "preset": "ts-jest",
-    "testMatch": null
-  },
-  "scripts": {
-    "build": "webpack",
-    "dev": "NODE_ENV=development npm run build",
-    "lint": "eslint '**/*.{ts,tsx}'",
-    "fix": "eslint '**/*.{ts,tsx}' --fix",
-    "clean": "rimraf dist node_modules coverage",
-    "test": "jest --maxWorkers=2",
-    "transpile": "tsc --project tsconfig.test.json",
-    "deploy": "wrangler publish",
-    "serve": "wrangler dev --env development",
-    "start": "npm run dev && KV_FILE_ROOT='../.kv/' cloudflare-worker-local  ./dist/worker.development.js localhost:3000 7150 ./variables.toml ",
-    "start.production": "NODE_ENV=production npm run build && KV_FILE_ROOT='../.kv/' cloudflare-worker-local ./dist/worker.production.js localhost:3000 7150 ./variables.toml "
-  },
-  "engines": {
-    "npm": ">=7.0.0",
-    "node": ">=16.0.0"
-  },
-  "devDependencies": {
-    "@cloudflare/workers-types": "2.2.2",
-    "@cloudflare/wrangler": "^1.19.12",
-    "@types/jest": "^28",
-    "@types/node": "^14.14.22",
-    "@types/service-worker-mock": "^2.0.1",
-    "@typescript-eslint/eslint-plugin": "^5.23.0",
-    "@typescript-eslint/parser": "^5.23.0",
-    "babel-core": "^6.26.3",
-    "babel-jest": "^28",
-    "cloud-http": "^0.0.26",
-    "cloud-router": "^0.0.13",
-    "cloudflare-worker-local": "^1.13.0",
-    "dotenv": "^8.2.0",
-    "eslint": "^8.15.0",
-    "eslint-plugin-prettierx": "github:utily/eslint-plugin-prettierx#utily-20220323",
-    "eslint-plugin-simple-import-sort": "^7.0.0",
-    "isomorphic-fetch": "^3.0.0",
-    "jest": "^28",
-    "prettierx": "github:utily/prettierx#utily-20220323",
-    "rimraf": "^3.0.2",
-    "service-worker-mock": "^2.0.5",
-    "terser-webpack-plugin": "^5.1.1",
-    "ts-jest": "^28",
-    "ts-loader": "^8.0.14",
-    "typescript": "^4.7.4",
-    "webpack": "^5.16.0",
-    "webpack-cli": "^4.4.0"
-  },
-  "dependencies": {
-    "@cfworker/cosmos": "^1.6.11",
-    "cryptly": "2.1.0",
-    "isoly": "2.0.3"
-  }
+	"name": "transactly",
+	"version": "2.0.0",
+	"description": "Transactional Key Value Store based on CosmosDB.",
+	"author": "Utily Contributors",
+	"license": "MIT",
+	"repository": "https://github.com/payfunc/transactly",
+	"bugs": {
+		"url": "https://github.com/payfunc/transactly/issues"
+	},
+	"homepage": "https://payfunc.com/open-source/transactly",
+	"private": false,
+	"main": "dist/index.js",
+	"typings": "dist/index.d.ts",
+	"git": {
+		"tagName": "v${version}"
+	},
+	"github": {
+		"release": true
+	},
+	"jest": {
+		"transform": {
+			"^.+\\.(j|t)sx?$": "ts-jest"
+		},
+		"transformIgnorePatterns": [
+			"node_modules/(?!(cryptly|authly|gracely|isoly|servly|cloud-router|cloud-http)/.*)"
+		],
+		"globals": {
+			"ts-jest": {
+				"tsconfig": "tsconfig.test.json",
+				"setTimeout": 2000
+			}
+		},
+		"testEnvironment": "node",
+		"testRegex": "((\\.|/)(test|spec))(\\.|\\/.+)(jsx?|tsx?)$",
+		"testPathIgnorePatterns": [
+			"node_modules/",
+			"dist/"
+		],
+		"collectCoverageFrom": [
+			"**/*.{ts,tsx,js,jsx}",
+			"!**/node_modules/**",
+			"!**/dist/**"
+		],
+		"preset": "ts-jest",
+		"testMatch": null
+	},
+	"scripts": {
+		"build": "webpack",
+		"dev": "NODE_ENV=development npm run build",
+		"lint": "eslint '**/*.{ts,tsx}'",
+		"fix": "eslint '**/*.{ts,tsx}' --fix",
+		"clean": "rimraf dist node_modules coverage",
+		"test": "jest --maxWorkers=2",
+		"transpile": "tsc --project tsconfig.test.json",
+		"deploy": "wrangler publish",
+		"serve": "wrangler dev --env development",
+		"start": "npm run dev && KV_FILE_ROOT='../.kv/' cloudflare-worker-local  ./dist/worker.development.js localhost:3000 7150 ./variables.toml ",
+		"start.production": "NODE_ENV=production npm run build && KV_FILE_ROOT='../.kv/' cloudflare-worker-local ./dist/worker.production.js localhost:3000 7150 ./variables.toml "
+	},
+	"engines": {
+		"npm": ">=7.0.0",
+		"node": ">=16.0.0"
+	},
+	"devDependencies": {
+		"@cloudflare/workers-types": "2.2.2",
+		"@cloudflare/wrangler": "^1.19.12",
+		"@types/jest": "^28",
+		"@types/node": "^14.14.22",
+		"@types/service-worker-mock": "^2.0.1",
+		"@typescript-eslint/eslint-plugin": "^5.23.0",
+		"@typescript-eslint/parser": "^5.23.0",
+		"babel-core": "^6.26.3",
+		"babel-jest": "^28",
+		"cloud-http": "^0.0.26",
+		"cloud-router": "^0.0.13",
+		"cloudflare-worker-local": "^1.13.0",
+		"dotenv": "^8.2.0",
+		"eslint": "^8.15.0",
+		"eslint-plugin-prettierx": "github:utily/eslint-plugin-prettierx#utily-20220323",
+		"eslint-plugin-simple-import-sort": "^7.0.0",
+		"isomorphic-fetch": "^3.0.0",
+		"jest": "^28",
+		"prettierx": "github:utily/prettierx#utily-20220323",
+		"rimraf": "^3.0.2",
+		"service-worker-mock": "^2.0.5",
+		"terser-webpack-plugin": "^5.1.1",
+		"ts-jest": "^28",
+		"ts-loader": "^8.0.14",
+		"typescript": "^4.7.4",
+		"webpack": "^5.16.0",
+		"webpack-cli": "^4.4.0"
+	},
+	"dependencies": {
+		"@cfworker/cosmos": "^1.6.11",
+		"cryptly": "2.1.0",
+		"isoly": "2.0.3"
+	}
 }
