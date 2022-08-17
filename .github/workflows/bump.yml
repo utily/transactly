@@ -24,5 +24,7 @@ jobs:
       - name: "Version Bump"
         id: version-bump
         uses: "phips28/gh-action-bump-version@master"
+        with:
+          tag-prefix: "release-"
         env:
           GITHUB_TOKEN: ${{ secrets.ADMIN_TOKEN }}
