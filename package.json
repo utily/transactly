@@ -1,6 +1,6 @@
 {
 	"name": "transactly",
-	"version": "2.0.3",
+	"version": "2.0.4",
 	"description": "Transactional Key Value Store based on CosmosDB.",
 	"author": "Utily Contributors",
 	"license": "MIT",
