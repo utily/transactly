@@ -18,23 +18,28 @@ export class Storage<T> {
 	async list(
 		shard: string,
 		start?: isoly.Date | isoly.DateTime,
-		end?: isoly.Date | isoly.DateTime
+		end?: isoly.Date | isoly.DateTime,
+		limit?: undefined,
+		continuationToken?: undefined,
+		timeProperty?: string
 	): Promise<T[] | undefined>
 	async list(
 		shard: string,
 		start?: isoly.Date | isoly.DateTime,
 		end?: isoly.Date | isoly.DateTime,
 		limit?: number,
-		continuationToken?: string
+		continuationToken?: string,
+		timeProperty?: string
 	): Promise<{ data: T[]; continuation?: string } | T[] | undefined>
 	async list(
 		shard: string,
 		start?: isoly.Date | isoly.DateTime,
 		end?: isoly.Date | isoly.DateTime,
 		limit?: number,
-		continuationToken?: string
+		continuationToken?: string,
+		timeProperty = "created"
 	): Promise<T[] | { data: T[]; continuation?: string } | undefined> {
-		const listed = await this.backend.list({ shard }, start, end, limit, continuationToken)
+		const listed = await this.backend.list({ shard }, start, end, limit, continuationToken, timeProperty)
 		return !listed
 			? listed
 			: limit || continuationToken

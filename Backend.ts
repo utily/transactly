@@ -50,7 +50,8 @@ export class Backend<T> {
 		start?: isoly.Date | isoly.DateTime,
 		end?: isoly.Date | isoly.DateTime,
 		limit?: number,
-		continuation?: string
+		continuation?: string,
+		timeProperty = "created"
 	): Promise<{ data: Document<T>[]; continuation?: string } | undefined> {
 		;({ start, end } = check(start, end))
 		const result: Document<T>[] = []
@@ -61,9 +62,9 @@ export class Backend<T> {
 		]
 		const query = `SELECT * FROM ROOT a ${
 			parameters.length
-				? `WHERE ${parameters.map(c => `a["value"]["created"] ${c.operator} ${c.name}`).join(" AND ")} `
+				? `WHERE ${parameters.map(c => `a["value"]["${timeProperty}"] ${c.operator} ${c.name}`).join(" AND ")} `
 				: ""
-		}ORDER BY a["value"]["created"] DESC`
+		}ORDER BY a["value"]["${timeProperty}"] DESC`
 		do {
 			response = response?.hasNext
 				? await response?.next()
