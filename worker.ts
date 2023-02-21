@@ -18,7 +18,16 @@ async function create(request: http.Request): Promise<http.Response.Like | any> 
 router.add("POST", "/:shard", create)
 
 async function list(request: http.Request): Promise<http.Response.Like | any> {
-	return await (await storage).list(request.parameter.shard ?? "test")
+	return await (
+		await storage
+	).list(
+		request.parameter.shard ?? "test",
+		request.search.start,
+		request.search.end,
+		undefined,
+		undefined,
+		request.search.timeProperty
+	)
 }
 router.add("GET", "/:shard", list)
 
