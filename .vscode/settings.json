@@ -1,13 +1,31 @@
 {
 	"files.exclude": {
 		".*": true,
+		"*.sh": true,
 		"*.json": true,
+		"CODEOWNERS": true,
 		"dist": true,
 		"README.md": true,
 		"LICENSE": true,
 		"tsconfig.*": true,
 		"node_modules": true,
-		"*.code-workspace": true
+		"*.code-workspace": true,
+		"*.config.ts": true,
+		"coverage": true
+	},
+	"search.exclude": {
+		".*": false,
+		"*.sh": false,
+		"*.json": false,
+		"CODEOWNERS": false,
+		"dist": false,
+		"README.md": false,
+		"LICENSE": false,
+		"tsconfig.*": false,
+		"node_modules": false,
+		"*.code-workspace": false,
+		"*.config.ts": false,
+		"coverage": false
 	},
 	"files.insertFinalNewline": true,
 	"editor.tabSize": 2,
@@ -16,11 +34,32 @@
 	"editor.formatOnSave": true,
 	"editor.formatOnPaste": true,
 	"editor.codeActionsOnSave": {
-		"source.fixAll.eslint": true,
-		"eslint.autoFixOnSave": true,
+		"source.fixAll.eslint": "explicit",
+		"eslint.autoFixOnSave": "explicit"
 	},
 	"eslint.format.enable": true,
 	"eslint.lintTask.enable": true,
 	"javascript.format.enable": false,
-	"typescript.format.enable": false
+	"typescript.format.enable": false,
+	"cSpell.words": [
+		"authly",
+		"cloudly",
+		"cryptly",
+		"flagly",
+		"gracely",
+		"isly",
+		"isoly",
+		"langly",
+		"paramly",
+		"persistly",
+		"selectivly",
+		"servly",
+		"servly-azure",
+		"smoothly",
+		"tidily",
+		"transactly",
+		"typedly",
+		"uply",
+	],
+	"typescript.tsdk": "node_modules/typescript/lib"
 }
